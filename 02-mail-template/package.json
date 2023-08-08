@@ -1,0 +1,11 @@
+{
+  "name": "study",
+  "version": "v1",
+  "description": "study",
+  "main": "index.js",
+  "repository": "https://github.com/bbangaro/node-study.git",
+  "author": "sh",
+  "license": "MIT",
+  "type": "module",
+  "dependencies": {}
+}
