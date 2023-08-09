@@ -6,8 +6,10 @@ const port = 3000;
 import swaggerUi from "swagger-ui-express";
 import swaggerJsdoc from "swagger-jsdoc";
 import { options } from "./swagger/swaggerOptions.js";
+import  cors from 'cors';
 const swaggerSpec = swaggerJsdoc(options);
 
+app.use(cors());
 app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 
 app.use(express.json());
@@ -29,9 +31,10 @@ app.post("/boards", (req, res) => {
 });
 
 app.post("/tokens/phone", (req, res) => {
-  const myPhone = req.body;
+  const myPhone = req.body.phone;
 
   console.log(`내 핸드폰 번호 `, myPhone);
+  res.send(`인증완료`).errored.message()
 });
 
 app.listen(port, () => {

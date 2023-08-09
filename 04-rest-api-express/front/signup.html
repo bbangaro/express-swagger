@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>회원가입</title>
+    <script src="https://unpkg.com/axios@1.1.2/dist/axios.min.js"></script>
+</head>
+<body>
+    휴대폰번호: <input type="text" id="cert-check" />
+    <button onclick="certCheck()">인증하기</button>
+    <div id="result">인증상태</div>
+
+    <button>회원가입</button>
+    
+  
+    <!-- script -->
+    <script>
+        const certCheck = async() => {
+            const certValue = document.getElementById("cert-check").value;
+
+            const result = await axios.post("http://localhost:3000/tokens/phone", {phone: certValue})
+            .then((res) => res)
+            .catch((err) => err);
+
+            console.log('result', result);
+            document.getElementById("result").innerText = result.data
+        }
+    </script>
+</body>
+</html>
