@@ -1,13 +1,26 @@
-function getWelcomeTemplate(myName: string) {
+function getWelcomeTemplate(userName: string): string {
   const result = `
     <html>
         <body>
-            <h1>${myName}야 공부해</h1>
+            <h1>${userName}야 공부해</h1>
         </body>
     </html>
     `;
-  console.log(result);
+  return result;
 }
 
-const myName = "서나";
-getWelcomeTemplate(myName);
+const sendTemplateToEmail = (email: string, myTemplate: string) => {
+  console.log("메일 전송");
+};
+
+const createUser = (user: { userName: string; email: string }) => {
+  const isValid = true;
+
+  if (isValid) {
+    const myTemplate: string = getWelcomeTemplate(user.userName);
+    sendTemplateToEmail(user.email, myTemplate);
+  }
+};
+
+const user = { userName: "서나", email: "bbangaro@naver.com" };
+createUser(user);
