@@ -6,7 +6,7 @@ dotenv.config();
 function getWelcomeTemplate(userName) {
   const result = `
     <html>
-        <body>
+         <body>
             <h1>${userName}야 공부해</h1>
             <h3>이건 node에서 보내는 메일</h3>
         </body>
