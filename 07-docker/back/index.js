@@ -1,34 +1,48 @@
 import express from "express";
+import cors from "cors";
 
-const app = express();
-const port = 3000;
-
+// swagger
 import swaggerUi from "swagger-ui-express";
 import swaggerJsdoc from "swagger-jsdoc";
 import { options } from "./swagger/swaggerOptions.js";
-import cors from "cors";
 const swaggerSpec = swaggerJsdoc(options);
 
+// db
+import mongoose from "mongoose";
+import { Board } from "./models/board.model.js";
+
+// utils
 import { getToken, sendTokenToSMS } from "./phone.js";
 import { createUser } from "./email.js";
 
+const app = express();
+const port = 3000;
 app.use(cors());
+app.use(express.json());
 app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 
-app.use(express.json());
-
-app.get("/boards", (req, res) => {
-  const result = [
-    { id: 1, user: "휴", title: "휴 제목", contents: "휴 내용" },
-    { id: 2, user: "용", title: "용 제목", contents: "용 내용" },
-    { id: 3, user: "서나", title: "서나 제목", contents: "서나 내용" },
-  ];
+app.get("/boards", async (req, res) => {
+  // const result = [
+  //   { id: 1, user: "휴", title: "휴 제목", contents: "휴 내용" },
+  //   { id: 2, user: "용", title: "용 제목", contents: "용 내용" },
+  //   { id: 3, user: "서나", title: "서나 제목", contents: "서나 내용" },
+  // ];
+  console.log("게시판 조회");
+  const result = await Board.find();
 
   res.send(result);
 });
 
-app.post("/boards", (req, res) => {
+app.post("/boards", async (req, res) => {
   console.log(req.body);
+  const { user, title, contents } = req.body;
+
+  const board = new Board({
+    user: user,
+    title: title,
+    contents: contents,
+  });
+  await board.save();
 
   res.send("게시물 등록 성공!!");
 });
@@ -55,6 +69,12 @@ app.post("/users", (req, res) => {
   res.send("생성완료");
 });
 
+// 몽고DB 접속 (Docker Container name으로 접속)
+mongoose
+  .connect("mongodb://database:27017/dockerdb")
+  .then(() => console.log("도커DB 연결"));
+
+// Backend API 서버 오픈
 app.listen(port, () => {
   console.log(`Example app listening on port ${port}`);
 });
