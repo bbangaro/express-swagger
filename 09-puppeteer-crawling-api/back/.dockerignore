@@ -1,0 +1,3 @@
+# 로컬 도커 컨테이너의 충돌을 방지
+# Dockerfile에서 node_modules를 생성하기 때문에 기존 node_modules는 제외
+node_modules
