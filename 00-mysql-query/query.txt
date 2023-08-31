@@ -1,0 +1,36 @@
+
+show databases;
+
+use testproject;
+
+show tables;
+
+desc product;
+
+
+INSERT INTO product(id, name, description, price, isSoldout)
+			values(uuid(), "마우스", "정말 좋은 마우스!!!!!!", 15000, false);
+			
+		
+INSERT INTO product(id, name, description, price, isSoldout)
+			values(uuid(), "노트북", "정말 좋은 맥!!!북!!!!", 2500000, false);
+
+SELECT * FROM product_saleslocation;
+
+INSERT INTO product_saleslocation(id, address, addressDetail, lat, lng, meetingTime)
+			values(uuid(), "권선구", "수원역", "123.12", "30.1", "2023-8-30");
+
+UPDATE product
+	set name = "키보드"
+	WHERE price = "15000"
+;
+
+UPDATE product 
+	SET productSaleslocationId = "0b19e514-47c8-11ee-8848-12e2376e803a"
+	WHERE name = "키보드";
+	
+SELECT  * from product;
+
+SELECT ps.id, name, price, address, addressDetail as addrDetail, lat, lng
+  from product p, product_saleslocation ps 
+ WHERE p.productSaleslocationId = ps.id; 
