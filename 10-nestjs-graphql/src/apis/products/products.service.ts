@@ -1,18 +1,18 @@
-import { Args, Mutation, Resolver } from '@nestjs/graphql';
-import { ProductsService } from './products.resolver';
+import { Injectable } from '@nestjs/common';
 import { CreateProductInput } from './dto/create-product.input';
+import { Repository } from 'typeorm';
+import { Product } from './entities/product.entity';
+import { InjectRepository } from '@nestjs/typeorm';
 
-@Resolver()
-export class ProductsResolver {
+interface IProductsServiceCreate {
+  createProductInput: CreateProductInput;
+}
+
+@Injectable()
+export class ProductsService {
   constructor(
-    private readonly productsService: ProductsService, //
+    @InjectRepository(Product)
+    private readonly productsRepository: Repository<Product>, //
   ) {}
-
-  @Mutation()
-  createProduct(
-    @Args('createProductInput') createProductInput: CreateProductInput,
-  ) {
-    console.log('create', createProductInput);
-    return this.productsService.create({ createProductInput });
-  }
+  create({ createProductInput }: IProductsServiceCreate) {}
 }
