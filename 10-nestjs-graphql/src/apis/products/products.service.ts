@@ -1,12 +1,11 @@
 import { Injectable } from '@nestjs/common';
-import { CreateProductInput } from './dto/create-product.input';
 import { Repository } from 'typeorm';
 import { Product } from './entities/product.entity';
 import { InjectRepository } from '@nestjs/typeorm';
-
-interface IProductsServiceCreate {
-  createProductInput: CreateProductInput;
-}
+import {
+  IProductsServiceCreate,
+  IProductsServiceFindOne,
+} from './interfaces/products-service.interface';
 
 @Injectable()
 export class ProductsService {
@@ -14,5 +13,21 @@ export class ProductsService {
     @InjectRepository(Product)
     private readonly productsRepository: Repository<Product>, //
   ) {}
-  create({ createProductInput }: IProductsServiceCreate) {}
+
+  findOne({ productId }: IProductsServiceFindOne): Promise<Product> {
+    return this.productsRepository.findOne({ where: { id: productId } });
+  }
+
+  findAll(): Promise<Product[]> {
+    return this.productsRepository.find();
+  }
+
+  create({ createProductInput }: IProductsServiceCreate): Promise<Product> {
+    console.log(createProductInput);
+    const result = this.productsRepository.save({
+      ...createProductInput,
+    });
+
+    return result;
+  }
 }
