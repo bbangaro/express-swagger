@@ -1,7 +1,8 @@
-import { Args, Mutation, Resolver } from '@nestjs/graphql';
+import { Args, Mutation, Query, Resolver } from '@nestjs/graphql';
 import { CreateProductInput } from './dto/create-product.input';
 import { Product } from './entities/product.entity';
 import { ProductsService } from './products.service';
+import { Product } from './entities/product.entity';
 
 @Resolver()
 export class ProductsResolver {
@@ -9,10 +10,24 @@ export class ProductsResolver {
     private readonly productsService: ProductsService, //
   ) {}
 
+<<<<<<< HEAD
   // fetchProduct(@Args('productId') productId: string, //
   // ): Promise<Product> {
   //    return this.productsService.findOne({ productId });
   // }
+=======
+  @Query(() => Product)
+  fetchProduct(
+    @Args('productId') productId: string, //
+  ): Promise<Product> {
+    return this.productsService.findOne({ productId });
+  }
+
+  @Query(() => [Product])
+  fetchProducts(): Promise<Product[]> {
+    return this.productsService.findAll();
+  }
+>>>>>>> 182532b7d50a65b9b74d573c0b83fe1945590d12
 
   @Mutation(() => Product)
   createProduct(
