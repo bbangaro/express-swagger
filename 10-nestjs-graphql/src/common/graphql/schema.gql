@@ -54,13 +54,14 @@ type Product {
 
 type Query {
   fetchBoards: [Board!]!
+  fetchProducs: [Product!]!
   fetchProduct(productId: String!): Product!
-  fetchProducts: [Product!]!
 }
 
 type Mutation {
   createBoard(createBoardInput: CreateBoardInput!): String!
   createProduct(createProductInput: CreateProductInput!): Product!
+  updateProduct(productId: String!, updateProductInput: UpdateProductInput!): Product!
 }
 
 input CreateBoardInput {
@@ -73,4 +74,10 @@ input CreateProductInput {
   name: String!
   description: String!
   price: Int!
+}
+
+input UpdateProductInput {
+  name: String
+  description: String
+  price: Int
 }

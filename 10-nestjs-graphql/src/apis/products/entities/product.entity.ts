@@ -14,6 +14,12 @@ import {
   PrimaryGeneratedColumn,
 } from 'typeorm';
 
+/**
+ * grapql용 타입정의
+ * @ObjectType()
+ * @Field(() => String)
+ */
+
 @Entity()
 @ObjectType()
 export class Product {
