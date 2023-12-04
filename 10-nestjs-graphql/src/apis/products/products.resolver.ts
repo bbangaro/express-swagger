@@ -11,7 +11,7 @@ export class ProductsResolver {
   ) {}
 
   @Query(() => [Product])
-  fetchProducs(): Promise<Product[]> {
+  fetchProducts(): Promise<Product[]> {
     return this.productsService.findAll();
   }
 
@@ -37,5 +37,10 @@ export class ProductsResolver {
     @Args('updateProductInput') updateProductInput: UpdateProductInput,
   ): Promise<Product> {
     return this.productsService.update({ productId, updateProductInput });
+  }
+
+  @Mutation(() => Boolean)
+  deleteProduct(@Args('productId') productId: string): Promise<boolean> {
+    return this.productsService.delete({ productId });
   }
 }

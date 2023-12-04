@@ -5,6 +5,8 @@ import { ProductTags } from 'src/apis/productTags/entities/productTag.entity';
 import { User } from 'src/apis/users/entities/user.entity';
 import {
   Column,
+  CreateDateColumn,
+  DeleteDateColumn,
   Entity,
   JoinColumn,
   JoinTable,
@@ -12,6 +14,7 @@ import {
   ManyToOne,
   OneToOne,
   PrimaryGeneratedColumn,
+  UpdateDateColumn,
 } from 'typeorm';
 
 /**
@@ -61,4 +64,13 @@ export class Product {
   @ManyToMany(() => ProductTags, (productTags) => productTags.products)
   @Field(() => [ProductTags])
   productTags: ProductTags[];
+
+  // @CreateDateColumn() // 데이터 등록 시간 자동으로 추가
+  // createAt: Date;
+
+  // @UpdateDateColumn() // 데이터 등록 시간 자동으로 추가
+  // updateAt: Date;
+
+  @DeleteDateColumn() // 소프트삭제 시간 기록을 위함
+  deletedAt: Date;
 }

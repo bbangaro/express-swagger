@@ -5,6 +5,7 @@ import { Product } from './entities/product.entity';
 import {
   IProductsServiceCheckSoldout,
   IProductsServiceCreate,
+  IProductsServiceDelete,
   IProductsServiceFindOne,
   IProductsServiceUpdate,
 } from './interfaces/products-service.interface';
@@ -78,5 +79,34 @@ export class ProductsService {
     //     HttpStatus.UNPROCESSABLE_ENTITY,
     //   );
     // }
+  }
+
+  async delete({ productId }: IProductsServiceDelete): Promise<boolean> {
+    // 1. 진짜 삭제
+    // const result = await this.productsRepository.delete({ id: productId });
+    // return result.affected ? true : false;
+
+    // 2. 소프트 삭제 (isDeleted - boolean)
+    // const result = this.productsRepository.update(
+    //   { id: productId },
+    //   { isDeleted: true },
+    // );
+
+    // 3. 소프트 삭제 (deletedAt - 날짜)
+    // const result = this.productsRepository.update(
+    //   { id: productId },
+    //   { deletedAt: new Date() },
+    // );
+
+    // 4. 소프트 리무브 (TypeORM 제공)
+    // id로만 삭제 가능
+    // 여러 ID 한번에 지우기 가능 softRemove([{ id: productId }, { id: productId2 }])
+    // this.productsRepository.softRemove({ id: productId });
+
+    // 5. 소프트 딜리트 (TypeORM 제공)
+    // 다른 컬럼으로 삭제 가능
+    // 여러 ID 한번에 지우기 불가능
+    const result = this.productsRepository.softDelete({ id: productId });
+    return (await result).affected ? true : false;
   }
 }
