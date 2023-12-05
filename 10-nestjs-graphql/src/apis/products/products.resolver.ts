@@ -26,7 +26,6 @@ export class ProductsResolver {
   createProduct(
     @Args('createProductInput') createProductInput: CreateProductInput,
   ): Promise<Product> {
-    console.log('create', createProductInput);
     return this.productsService.create({ createProductInput });
   }
 
@@ -35,6 +34,7 @@ export class ProductsResolver {
   updateProduct(
     @Args('productId') productId: string,
     @Args('updateProductInput') updateProductInput: UpdateProductInput,
+    // ): Promise<void> {
   ): Promise<Product> {
     return this.productsService.update({ productId, updateProductInput });
   }

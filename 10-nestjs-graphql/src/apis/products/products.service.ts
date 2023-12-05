@@ -1,6 +1,6 @@
 import { Injectable, UnprocessableEntityException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { In, Repository } from 'typeorm';
 import { Product } from './entities/product.entity';
 import { ProductSaleslocationService } from './../productSaleslocation/productSaleslocation.service';
 import {
@@ -10,6 +10,7 @@ import {
   IProductsServiceFindOne,
   IProductsServiceUpdate,
 } from './interfaces/products-service.interface';
+import { ProductsTagsService } from '../productTags/productsTags.service';
 
 @Injectable()
 export class ProductsService {
@@ -17,18 +18,19 @@ export class ProductsService {
     @InjectRepository(Product)
     private readonly productsRepository: Repository<Product>,
     private readonly productSaleslocationService: ProductSaleslocationService,
+    private readonly productsTagsService: ProductsTagsService,
   ) {}
 
   findAll(): Promise<Product[]> {
     return this.productsRepository.find({
-      relations: ['productSaleslocation'],
+      relations: ['productSaleslocation', 'productCategory'],
     });
   }
 
   findOne({ productId }: IProductsServiceFindOne): Promise<Product> {
     return this.productsRepository.findOne({
       where: { id: productId },
-      relations: ['productSaleslocation'],
+      relations: ['productSaleslocation', 'productCategory'],
     });
   }
 
@@ -41,50 +43,104 @@ export class ProductsService {
     //   ...createProductInput,
     // });
 
-    // 2. 상품과 상품거래위치를 같이 등록하는 방법
-    const { productSaleslocation, ...product } = createProductInput;
+    const { productSaleslocation, productCategoryId, productTags, ...product } =
+      createProductInput;
 
+    // 2. 상품과 상품거래위치를 같이 등록하는 방법
     const productSalesResult = await this.productSaleslocationService.create({
       productSaleslocation,
     });
 
+    // 3. 상품태그 등록
+
+    const tagNames = productTags.map((el) => el.replace('#', ''));
+    const prevTags = await this.productsTagsService.findByNames({ tagNames });
+
+    let tempTags = [];
+    tagNames.forEach((el) => {
+      const isExists = prevTags.find((prevEl) => prevEl.name === el);
+      if (!isExists) {
+        tempTags.push({ name: el });
+      }
+    });
+
+    const newTagsResult = await this.productsTagsService.bulkInsert({
+      names: tempTags,
+    }); // bulk-insert
+    const tags = [...prevTags, ...newTagsResult.identifiers];
+
     const productsResult = this.productsRepository.save({
       ...product,
       productSaleslocation: productSalesResult,
+      productCategory: {
+        id: productCategoryId,
+        // name까지 받고싶으면 productSaleslocation 처럼!
+      },
+      productTags: tags,
     });
 
     return productsResult;
   }
 
+  /**
+   * https://sjh9708.tistory.com/38
+   */
   async update({
     productId,
     updateProductInput,
-  }: IProductsServiceUpdate): Promise<Product> {
+  }: // }: IProductsServiceUpdate): Promise<void> {
+  IProductsServiceUpdate): Promise<Product> {
     // this.productsRepository.create // DB 접속과 관련 없음. 등록을 위한 빈 객체 생성
     // this.productsRepository.insert // 결과를 객체로 못 돌려 받는 등록 방법
     // this.productsRepository.update // 결과를 객체로 못 돌려 받는 수정 방법
     // this.productsRepository.save(id ? 등록 : 조회) => response(obj)
 
-    const product = await this.findOne({ productId });
+    const { productSaleslocation, productCategoryId, productTags, ...product } =
+      updateProductInput;
 
-    this.checkSoldout({ product });
+    const productResult = await this.findOne({ productId });
+    this.checkSoldout({ product: productResult });
 
-    // try {
-    //   const result = this.productsRepository.save({
-    //     ...product, // 수정 후, 수정되지 않은 결과값까지 객체로 돌려받고 싶을 때
-    //     ...updateProductInput,
-    //   });
-
-    //   return result;
-    // } catch (err) {
-    //   console.log(err);
-    // }
-    const result = this.productsRepository.save({
-      ...product, // 수정 후, 수정되지 않은 결과값까지 객체로 돌려받고 싶을 때
-      ...updateProductInput,
+    //  위치갱신
+    const productSalesResult = await this.productSaleslocationService.create({
+      productSaleslocation,
     });
 
-    return result;
+    // 상품태그 등록
+    const tagNames = productTags.map((el) => el.replace('#', ''));
+    const prevTags = await this.productsTagsService.findByNames({ tagNames });
+
+    let tempTags = [];
+    tagNames.forEach((el) => {
+      const isExists = prevTags.find((prevEl) => prevEl.name === el);
+      if (!isExists) {
+        tempTags.push({ name: el });
+      }
+    });
+
+    const newTagsResult = await this.productsTagsService.bulkInsert({
+      names: tempTags,
+    }); // bulk-insert
+    const tags = [...prevTags, ...newTagsResult.identifiers];
+
+    const productsResult = this.productsRepository.save({
+      ...productResult,
+      ...product,
+      productSaleslocation: productSalesResult,
+      productCategory: {
+        id: productCategoryId,
+        // name까지 받고싶으면 productSaleslocation 처럼!
+      },
+      productTags: tags,
+    });
+
+    //
+    // const result = this.productsRepository.save({
+    //   ...product, // 수정 후, 수정되지 않은 결과값까지 객체로 돌려받고 싶을 때
+    //   ...updateProductInput,
+    // });
+
+    return productsResult;
   }
 
   /**
