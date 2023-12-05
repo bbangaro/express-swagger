@@ -52,7 +52,6 @@ export class ProductsService {
     });
 
     // 3. 상품태그 등록
-
     const tagNames = productTags.map((el) => el.replace('#', ''));
     const prevTags = await this.productsTagsService.findByNames({ tagNames });
 
@@ -83,7 +82,7 @@ export class ProductsService {
   }
 
   /**
-   * https://sjh9708.tistory.com/38
+   * 참고: https://sjh9708.tistory.com/38
    */
   async update({
     productId,
@@ -98,15 +97,15 @@ export class ProductsService {
     const { productSaleslocation, productCategoryId, productTags, ...product } =
       updateProductInput;
 
-    const productResult = await this.findOne({ productId });
-    this.checkSoldout({ product: productResult });
+    const prevProductResult = await this.findOne({ productId });
+    this.checkSoldout({ product: prevProductResult });
 
-    //  위치갱신
+    // 2. 상품과 상품거래위치를 같이 등록하는 방법 (create와 동일)
     const productSalesResult = await this.productSaleslocationService.create({
       productSaleslocation,
     });
 
-    // 상품태그 등록
+    // 3. 상품태그 등록 (create와 동일)
     const tagNames = productTags.map((el) => el.replace('#', ''));
     const prevTags = await this.productsTagsService.findByNames({ tagNames });
 
@@ -124,21 +123,14 @@ export class ProductsService {
     const tags = [...prevTags, ...newTagsResult.identifiers];
 
     const productsResult = this.productsRepository.save({
-      ...productResult,
+      ...prevProductResult, // 업데이트 로직에서 추가
       ...product,
       productSaleslocation: productSalesResult,
       productCategory: {
         id: productCategoryId,
-        // name까지 받고싶으면 productSaleslocation 처럼!
       },
       productTags: tags,
     });
-
-    //
-    // const result = this.productsRepository.save({
-    //   ...product, // 수정 후, 수정되지 않은 결과값까지 객체로 돌려받고 싶을 때
-    //   ...updateProductInput,
-    // });
 
     return productsResult;
   }
@@ -150,13 +142,6 @@ export class ProductsService {
     if (product.isSoldout) {
       throw new UnprocessableEntityException('이미 판매 완료된 상품입니다.');
     }
-
-    // if (product.isSoldout) {
-    //   throw new HttpException(
-    //     '이미 판매 완료된 상품입니다.',
-    //     HttpStatus.UNPROCESSABLE_ENTITY,
-    //   );
-    // }
   }
 
   async delete({ productId }: IProductsServiceDelete): Promise<boolean> {
