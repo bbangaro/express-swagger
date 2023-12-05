@@ -2,6 +2,7 @@ import { Injectable, UnprocessableEntityException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Product } from './entities/product.entity';
+import { ProductSaleslocationService } from './../productSaleslocation/productSaleslocation.service';
 import {
   IProductsServiceCheckSoldout,
   IProductsServiceCreate,
@@ -14,24 +15,45 @@ import {
 export class ProductsService {
   constructor(
     @InjectRepository(Product)
-    private readonly productsRepository: Repository<Product>, //
+    private readonly productsRepository: Repository<Product>,
+    private readonly productSaleslocationService: ProductSaleslocationService,
   ) {}
 
   findAll(): Promise<Product[]> {
-    return this.productsRepository.find();
+    return this.productsRepository.find({
+      relations: ['productSaleslocation'],
+    });
   }
 
   findOne({ productId }: IProductsServiceFindOne): Promise<Product> {
-    return this.productsRepository.findOne({ where: { id: productId } });
+    return this.productsRepository.findOne({
+      where: { id: productId },
+      relations: ['productSaleslocation'],
+    });
   }
 
-  create({ createProductInput }: IProductsServiceCreate): Promise<Product> {
+  async create({
+    createProductInput,
+  }: IProductsServiceCreate): Promise<Product> {
     console.log(createProductInput);
-    const result = this.productsRepository.save({
-      ...createProductInput,
+    // 1. 상품 하나만 등록할 때
+    // const result = this.productsRepository.save({
+    //   ...createProductInput,
+    // });
+
+    // 2. 상품과 상품거래위치를 같이 등록하는 방법
+    const { productSaleslocation, ...product } = createProductInput;
+
+    const productSalesResult = await this.productSaleslocationService.create({
+      productSaleslocation,
     });
 
-    return result;
+    const productsResult = this.productsRepository.save({
+      ...product,
+      productSaleslocation: productSalesResult,
+    });
+
+    return productsResult;
   }
 
   async update({
@@ -106,7 +128,7 @@ export class ProductsService {
     // 5. 소프트 딜리트 (TypeORM 제공)
     // 다른 컬럼으로 삭제 가능
     // 여러 ID 한번에 지우기 불가능
-    const result = this.productsRepository.softDelete({ id: productId });
-    return (await result).affected ? true : false;
+    const result = await this.productsRepository.softDelete({ id: productId });
+    return result.affected ? true : false;
   }
 }

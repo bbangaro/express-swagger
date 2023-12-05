@@ -5,6 +5,7 @@ import { BoardModule } from './apis/boards/boards.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
 // import { ConfigModule } from '@nestjs/config';
 import { ProductsModule } from './apis/products/products.module';
+import { ProductSaleslocationService } from './apis/productSaleslocation/productSaleslocation.service';
 
 @Module({
   imports: [
