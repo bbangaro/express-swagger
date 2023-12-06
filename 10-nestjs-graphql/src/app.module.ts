@@ -3,17 +3,22 @@ import { ApolloDriver, ApolloDriverConfig } from '@nestjs/apollo';
 import { GraphQLModule } from '@nestjs/graphql';
 import { BoardModule } from './apis/boards/boards.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
-// import { ConfigModule } from '@nestjs/config';
+import { ConfigModule } from '@nestjs/config';
 import { ProductsModule } from './apis/products/products.module';
-import { ProductSaleslocationService } from './apis/productSaleslocation/productSaleslocation.service';
 import { ProductsCategoriesModule } from './apis/productCategory/productsCategories.module';
+import { UsersService } from './apis/users/users.service';
+import { UsersResolver } from './apis/users/users.resolver';
+import { UsersModule } from './apis/users/users.module';
+import { AuthModule } from './apis/auth/auth.module';
 
 @Module({
   imports: [
+    AuthModule,
+    UsersModule,
     BoardModule,
     ProductsModule,
     ProductsCategoriesModule,
-    // ConfigModule.forRoot(),
+    ConfigModule.forRoot(),
     GraphQLModule.forRoot<ApolloDriverConfig>({
       driver: ApolloDriver,
       autoSchemaFile: 'src/common/graphql/schema.gql',

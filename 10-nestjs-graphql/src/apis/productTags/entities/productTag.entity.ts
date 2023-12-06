@@ -5,6 +5,9 @@ import { Column, Entity, ManyToMany, PrimaryGeneratedColumn } from 'typeorm';
 @Entity()
 @ObjectType()
 export class ProductTags {
+  replace(arg0: string, arg1: string): any {
+    throw new Error('Method not implemented.');
+  }
   @PrimaryGeneratedColumn('uuid')
   @Field(() => String)
   id: string;
