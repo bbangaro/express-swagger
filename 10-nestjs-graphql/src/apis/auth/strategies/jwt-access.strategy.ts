@@ -7,7 +7,11 @@ import { ExtractJwt, Strategy } from 'passport-jwt';
 //                                     비밀번호 검증, 만료시간 검증
 export class JwtAccessStrategy extends PassportStrategy(Strategy, 'access') {
   constructor() {
-    // 부모 PassportStrategy로 넘어가서 검증로직 탐
+    /**
+     * 부모 PassportStrategy로 넘어가서 검증로직 탐
+     * 비밀번호 검증
+     * 만료시간 검증
+     */
     super({
       // 직접 입력
       //   jwtFromRequest: (req) => {
@@ -24,6 +28,7 @@ export class JwtAccessStrategy extends PassportStrategy(Strategy, 'access') {
   }
 
   /**
+   * 내장 함수라 이름변경 X
    *
    * @param payload
    * @return req.user = {}
@@ -33,6 +38,8 @@ export class JwtAccessStrategy extends PassportStrategy(Strategy, 'access') {
   validate(payload) {
     console.log(payload);
 
+    // payload: 토큰에 넣어뒀던 데이터
+    // key값은 상관없음
     return {
       id: payload.sub,
     };

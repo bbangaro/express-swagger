@@ -1,6 +1,6 @@
 import { Injectable, UnprocessableEntityException } from '@nestjs/common';
 import {
-  IAuthServiceIAuthServiceGetAccessTokenLogin,
+  IAuthServiceGetAccessTokenLogin,
   IAuthServiceLogin,
 } from './interfaces/auth-service.interface';
 import { UsersService } from '../users/users.service';
@@ -32,9 +32,7 @@ export class AuthService {
     return this.getAccessToken({ user });
   }
 
-  getAccessToken({
-    user,
-  }: IAuthServiceIAuthServiceGetAccessTokenLogin): string {
+  getAccessToken({ user }: IAuthServiceGetAccessTokenLogin): string {
     return this.jwtService.sign(
       { sub: user.id }, // 내가 넣고싶은 데이터
       { secret: '나의비밀번호', expiresIn: '1h' },
