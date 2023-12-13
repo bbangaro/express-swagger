@@ -22,7 +22,16 @@ import { AuthModule } from './apis/auth/auth.module';
     GraphQLModule.forRoot<ApolloDriverConfig>({
       driver: ApolloDriver,
       autoSchemaFile: 'src/common/graphql/schema.gql',
+      /**
+       * 여기서 context를 작성해줘야 resolver @Context로 받을 수 있음
+       * 작성 안해주면 default로 req는 가지만 res는 안 감
+       */
+      context: (req, res) => ({
+        req, //
+        res,
+      }),
     }),
+    // TODO .env로 변경필요
     TypeOrmModule.forRoot({
       type: 'mysql',
       host: '127.0.0.1',

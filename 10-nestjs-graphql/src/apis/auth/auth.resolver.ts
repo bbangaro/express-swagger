@@ -1,5 +1,6 @@
-import { Args, Mutation, Resolver } from '@nestjs/graphql';
+import { Args, Context, Mutation, Resolver } from '@nestjs/graphql';
 import { AuthService } from './auth.service';
+import { IContext } from 'src/common/interfaces/context';
 
 @Resolver()
 export class AuthResolver {
@@ -11,7 +12,9 @@ export class AuthResolver {
   login(
     @Args('email') email: string, //
     @Args('password') password: string,
+    @Context() context: IContext, // req res
   ): Promise<string> {
-    return this.authService.login({ email, password });
+    context.req;
+    return this.authService.login({ email, password, context });
   }
 }

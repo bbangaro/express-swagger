@@ -14,7 +14,11 @@ export class AuthService {
     private readonly usersService: UsersService, //
   ) {}
 
-  async login({ email, password }: IAuthServiceLogin): Promise<string> {
+  async login({
+    email,
+    password,
+    context,
+  }: IAuthServiceLogin): Promise<string> {
     const user = await this.usersService.findOneByEmail({ email });
 
     // 이메일 확인
