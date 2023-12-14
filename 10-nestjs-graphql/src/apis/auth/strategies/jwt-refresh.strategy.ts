@@ -9,17 +9,16 @@ import { ExtractJwt, Strategy } from 'passport-jwt';
  * 비밀번호 검증
  * 만료시간 검증
  */
-export class JwtAccessStrategy extends PassportStrategy(Strategy, 'access') {
+export class JwtRefreshStrategy extends PassportStrategy(Strategy, 'refresh') {
   constructor() {
     super({
       // 직접 입력
-      //   jwtFromRequest: (req) => {
-      //     const token = req.headers.Authorization; // Bearer dddfdfdf
-      //     const accessToken = token.toLowerCase().replace('bearer', '').replace(' ', '');
-      //     return accessToken;
-      //   },
-      jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
-      secretOrKey: '나의비밀번호',
+      jwtFromRequest: (req) => {
+        const cookie = req.headers.cookie; // refreshToken=djfhlkadsfh
+        const refreshToken = cookie.replace('refreshToken=', '');
+        return refreshToken;
+      },
+      secretOrKey: '나의리프레시비밀번호',
     });
   }
 
@@ -33,8 +32,6 @@ export class JwtAccessStrategy extends PassportStrategy(Strategy, 'access') {
   validate(payload) {
     console.log(payload);
 
-    // payload: 토큰에 넣어뒀던 데이터
-    // key값은 상관없음
     return {
       id: payload.sub,
     };

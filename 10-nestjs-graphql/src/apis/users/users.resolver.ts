@@ -3,7 +3,7 @@ import { UsersService } from './users.service';
 import { User } from './entities/user.entity';
 import { UseGuards } from '@nestjs/common';
 
-import { GqlAuthAccessGuard } from '../auth/guards/gql-auth.guard';
+import { GqlAuthGuard } from '../auth/guards/gql-auth.guard';
 import { IContext } from 'src/common/interfaces/context';
 
 @Resolver()
@@ -18,7 +18,7 @@ export class UsersResolver {
    * 아래 conteext에서 받아올 수 있음
    */
   // @UseGuards(AuthGuard('access')) // rest-api 인가방법
-  @UseGuards(GqlAuthAccessGuard) // graphql 인가방법
+  @UseGuards(GqlAuthGuard('access')) // graphql 인가방법
   @Query(() => String)
   fetchUser(@Context() context: IContext): boolean {
     console.log('fetchUser 검증 끝 return', context.req.user);

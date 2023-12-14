@@ -1,4 +1,6 @@
-interface IAuthUser {
+import { Request, Response } from 'express';
+
+export interface IAuthUser {
   user?: {
     id: string;
   };
