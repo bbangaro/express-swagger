@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <script src="https://cdn.iamport.kr/v1/iamport.js"></script>
+    <script src="https://unpkg.com/axios@1.1.2/dist/axios.min.js"></script>
+    <title>결제페이지</title>
+  </head>
+  <body>
+    <button onclick="{requestPay()}">결제하기</button>
+
+    <script>
+      IMP.init("imp04053003"); // 예: 'imp00000000a'
+
+      const requestPay = () => {
+        IMP.request_pay(
+          {
+            pg: "kakaopay",
+            pay_method: "card",
+            // merchant_uid: "ORD20180131-0000011", // 주문번호(없으면 랜덤생성)
+            name: "노르웨이 회전 의자",
+            amount: 100, // 숫자 타입
+            buyer_email: "bbangaro@kakao.com",
+            buyer_name: "홍길동",
+            buyer_tel: "010-5047-7022",
+            buyer_addr: "서울특별시 강남구 신사동",
+            buyer_postcode: "01181",
+          },
+          async function (rsp) {
+            // callback
+            //rsp.imp_uid 값으로 결제 단건조회 API를 호출하여 결제결과를 판단합니다.
+            console.log("rsp.imp_uid", rsp);
+            if (rsp.success) {
+              //    {
+              //     "success": true,
+              //     "imp_uid": "imp_710271909972",  *****
+              //     "pay_method": "point",
+              //     "merchant_uid": "nobody_1702605271637",
+              //     "name": "노르웨이 회전 의자",
+              //     "paid_amount": 100,
+              //     "currency": "KRW",
+              //     "pg_provider": "kakaopay",
+              //     "pg_type": "payment",
+              //     "pg_tid": "T57bb1d73c8776d34374",
+              //     "apply_num": "",
+              //     "buyer_name": "홍길동",
+              //     "buyer_email": "bbangaro@kakao.com",
+              //     "buyer_tel": "010-5047-7022",
+              //     "buyer_addr": "서울특별시 강남구 신사동",
+              //     "buyer_postcode": "01181",
+              //     "custom_data": null,
+              //     "status": "paid",
+              //     "paid_at": 1702605308,
+              //     "receipt_url": "https://mockup-pg-web.kakao.com/v1/confirmation/p/T57bb1d73c8776d34374/acd332ef987070506c0c63d281a13b8350e9b7f2f91c7ecad98769a8c2294cc2",
+              //     "card_name": null,
+              //     "bank_name": null,
+              //     "card_quota": 0,
+              //     "card_number": ""
+              // }
+              alert("결제 성공.");
+              // backend api
+
+              axios.defaults.origin = "http://127.0.0.1:5500";
+              const result = await axios
+                .post(
+                  "http://localhost:3000/graphql",
+                  {
+                    query: `
+                      mutation {
+                        createPointTransaction(impUid: "${rsp.imp_uid}", amount: ${rsp.paid_amount}) {
+                            id
+                            impUid
+                            amount
+                            status
+                        }
+                      }
+                    `,
+                  },
+                  {
+                    headers: {
+                      Authorization:
+                        "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJiNjYwYTQ2Ni1mYTg1LTQ5M2QtYTQwZC0xNGRiY2NmODUwODIiLCJpYXQiOjE3MDI2MjE5OTUsImV4cCI6MTcwMjYyNTU5NX0.noMoMrnt18uAthtfCZAK-Bng9wV6bGn3GbOkksiei0I",
+                    },
+                  }
+                )
+                .then((res) => res)
+                .catch((err) => err);
+            } else {
+              alert("결제 실패. 다시 시도해 주세요.", rsp.error.msg);
+              // fail
+            }
+          }
+        );
+      };
+    </script>
+  </body>
+</html>
