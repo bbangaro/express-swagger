@@ -1,0 +1,15 @@
+show databases;
+
+use testproject;
+
+show tables;
+
+show variables;
+
+set GLOBAL max_connections = 151;
+
+show status;
+
+show processlist;
+
+kill 26;

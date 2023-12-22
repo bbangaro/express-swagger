@@ -1,0 +1,21 @@
+version: "3.7"
+
+services:
+  backend:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    volumes:
+      # local과 docker container 동기화
+      - ./index.js:/sourceCode/index.js
+      - ./email.js:/sourceCode/email.js
+    ports:
+      - 3000:3000
+
+  database:
+    # build:
+    #   context: .
+    #   dockerfile : Dockerfile.mongo
+    image: mongo:5
+    ports:
+      - 27017:27017

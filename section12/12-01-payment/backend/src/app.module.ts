@@ -10,12 +10,16 @@ import { ProductsCategoriesModule } from './apis/productCategory/productsCategor
 import { UsersModule } from './apis/users/users.module';
 import { AuthModule } from './apis/auth/auth.module';
 import { PointsTransactionsModule } from './apis/pointsTransactions/pointsTransactions.module';
+import { PaymentsMoudle } from './apis/payments/payments.module';
+import { FilesModule } from './apis/files/files.module';
 
 @Module({
   imports: [
     AuthModule,
     UsersModule,
     BoardModule,
+    FilesModule,
+    PaymentsMoudle,
     PointsTransactionsModule,
     ProductsModule,
     ProductsCategoriesModule,

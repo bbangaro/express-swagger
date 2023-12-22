@@ -68,9 +68,17 @@ enum POINT_TRANSACTION_STATUS_ENUM {
   CANCEL
 }
 
+type Payment {
+  id: String!
+  amount: Int!
+  tax: Int!
+  commission: Int!
+}
+
 type Query {
   fetchUser: String!
   fetchBoards: [Board!]!
+  fetchPayments: [Payment!]!
   fetchProducts: [Product!]!
   fetchProduct(productId: String!): Product!
 }
@@ -80,6 +88,8 @@ type Mutation {
   restoreAccessToken: String!
   createUser(name: String!, password: String!, age: Int!, email: String!): User!
   createBoard(createBoardInput: CreateBoardInput!): String!
+  uploadFile(files: [Upload!]!): [String!]!
+  createPayment(amount: Float!): Payment!
   createPointTransaction(impUid: String!, amount: Int!): PointTransaction!
   createProduct(createProductInput: CreateProductInput!): Product!
   updateProduct(productId: String!, updateProductInput: UpdateProductInput!): Product!
@@ -92,6 +102,9 @@ input CreateBoardInput {
   title: String!
   contents: String!
 }
+
+"""The `Upload` scalar type represents a file upload."""
+scalar Upload
 
 input CreateProductInput {
   name: String!

@@ -1,0 +1,30 @@
+# 포스트맨 요청방법
+
+Headers => X
+Headers => 
+ - Content-Type: application/json
+ - Apollo-Require-Preflight: true
+ 
+Body => form-data
+
+single 
+
+operations   { "query": "mutation uploadFile($file: Upload!) { uploadFile(file: $file) }", "variables": { "file": null } }
+map          { "0": ["variables.file"] }
+0            [파일선택] 서나.jpeg
+
+--------
+
+multi  
+
+operations   { "query": "mutation uploadFile($files: [Upload!]!) { uploadFile(files: $files) }", "variables": { "files": [null, null] } }
+map          { "0": ["variables.files.0"], "1": ["variables.files.1"] }
+0            [파일선택] 서나.jpeg
+1            [파일선택] 서나2.jpeg
+
+
+
+
+
+
+// "0"은 파일 갯수
