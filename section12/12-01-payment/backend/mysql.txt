@@ -30,9 +30,8 @@ show processlist;
 
 kill 26;
 
-* 프로시저 
-
-*선언
+---------------------------------------------------------------------------------------
+* 프로시저 선언
 create procedure mydummydata() 
 begin
 	declare i int default 1;
@@ -47,4 +46,20 @@ show procedure status;
 
 * 실행
 call mydummydata();
+
+---------------------------------------------------------------------------------------
  
+SELECT count(*) from board;
+
+* 속도 확인
+-- 1.25s
+explain SELECT * from board board where title = '0.7217884172888365'; 
+
+-- 6ms
+explain SELECT * from board board where id = 8; 
+            
+* 인덱스 등록 정보
+show index from board;
+
+* 인덱스 등록
+create index idx_title on board(title);

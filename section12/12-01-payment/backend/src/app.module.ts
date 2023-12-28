@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { CacheModule, Module } from '@nestjs/common';
 import { ApolloDriver, ApolloDriverConfig } from '@nestjs/apollo';
 import { GraphQLModule } from '@nestjs/graphql';
 import { TypeOrmModule } from '@nestjs/typeorm';
@@ -23,7 +23,7 @@ import { FilesModule } from './apis/files/files.module';
     PointsTransactionsModule,
     ProductsModule,
     ProductsCategoriesModule,
-    ConfigModule.forRoot(),
+    ConfigModule.forRoot(), // process.env보다 위에 있어야 읽을 수 있음
     GraphQLModule.forRoot<ApolloDriverConfig>({
       driver: ApolloDriver,
       autoSchemaFile: 'src/common/graphql/schema.gql',
@@ -48,6 +48,10 @@ import { FilesModule } from './apis/files/files.module';
       synchronize: true,
       logging: true,
     }),
+    // 하던중
+    // CacheModule.register({
+    //   store: redis
+    // })
   ],
   // controllers: [AppController],
   // providers: [AppService],
