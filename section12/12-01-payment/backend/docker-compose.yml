@@ -2,32 +2,32 @@ version: '3.7'
 
 # 컴퓨터들
 services:
-  # # 컴퓨터 이름
-  # backend:
-  #   build:
-  #     context: .
-  #     dockerfile: Dockerfile
-  #   volumes:
-  #     # local과 docker container 동기화 (그래야 nodemon refresh 가능)
-  #     # 현위치에 src 폴더를 도커안에 sourceCode/src 폴더와 공유달라!
-  #     - ./src:/sourceCode/src
-  #   ports:
-  #     - 3000:3000
-  #   env_file:
-  #     - ./env.docker
+  # 컴퓨터 이름
+  backend:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    volumes:
+      # local과 docker container 동기화 (그래야 nodemon refresh 가능)
+      # 현위치에 src 폴더를 도커안에 sourceCode/src 폴더와 공유달라!
+      - ./src:/sourceCode/src
+    ports:
+      - 3000:3000
+    env_file:
+      - ./.env.docker
 
-  # # 컴퓨터 이름
-  # database:
-  #   # build:
-  #   #   context: .
-  #   # platform: linux/86_64 에러날 때 (컴퓨터 사양문제, cpu...)
-  #   image: mysql:latest
-  #   environment:
-  #     # mydocker라는 DB가 생성됨
-  #     MYSQL_DATABASE: 'mydocker'
-  #     MYSQL_ROOT_PASSWORD: 'tjsk1004'
-  #   ports:
-  #     - 3306:3306
+  # 컴퓨터 이름
+  database:
+    # build:
+    #   context: .
+    # platform: linux/86_64 에러날 때 (컴퓨터 사양문제, cpu...)
+    image: mysql:latest
+    environment:
+      # mydocker라는 DB가 생성됨
+      MYSQL_DATABASE: 'mydocker'
+      MYSQL_ROOT_PASSWORD: 'tjsk1004'
+    ports:
+      - 3306:3306
 
   # 컴퓨터 이름
   my-redis:

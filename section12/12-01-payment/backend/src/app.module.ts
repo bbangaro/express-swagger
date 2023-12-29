@@ -4,6 +4,9 @@ import { GraphQLModule } from '@nestjs/graphql';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { ConfigModule } from '@nestjs/config';
 
+import { RedisClientOptions } from 'redis';
+import * as redisStore from 'cache-manager-redis-store';
+
 import { BoardModule } from './apis/boards/boards.module';
 import { ProductsModule } from './apis/products/products.module';
 import { ProductsCategoriesModule } from './apis/productCategory/productsCategories.module';
@@ -49,9 +52,11 @@ import { FilesModule } from './apis/files/files.module';
       logging: true,
     }),
     // 하던중
-    // CacheModule.register({
-    //   store: redis
-    // })
+    CacheModule.register<RedisClientOptions>({
+      store: redisStore,
+      url: 'redis://my-redis:6379', // Docker간에는 name resolution 가능
+      isGlobal: true,
+    }),
   ],
   // controllers: [AppController],
   // providers: [AppService],
